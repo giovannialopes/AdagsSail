@@ -18,6 +18,8 @@ export interface Settings {
   captureDelayMs: number;
   panelBounds?: { x: number; y: number };
   goal: Goal; // prioridade de farm escolhida no painel
+  // unidade de interface medida por tamanho de janela ("1920x1080" → { seal, terminal })
+  uiUnits?: Record<string, { seal?: number; terminal?: number }>;
 }
 
 export const DEFAULT_SETTINGS: Settings = {

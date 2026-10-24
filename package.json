@@ -1,7 +1,7 @@
 {
   "name": "adagssail",
   "productName": "AdagsSail",
-  "version": "1.3.5",
+  "version": "1.4.0",
   "description": "Overlay que avalia as cartas (Seal Whispers) do Blacksail no Torchlight: Infinite SS14",
   "main": "out/main.js",
   "author": "Giovanni",

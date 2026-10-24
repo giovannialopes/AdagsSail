@@ -2,26 +2,29 @@
 // 3 cartas lado a lado; título em ~58% da altura e o afixo logo abaixo. A interface escala pela
 // altura e fica centralizada, então as posições são frações da altura a partir do centro.
 import type { BBox, CardRead, OcrLine, Region } from './layout';
+import { uiUnit } from './uiscale';
 import { titleType } from './whisper-parser';
 
+// Tudo em unidades de interface U (1080 px na janela 1920x1080), a partir do centro da área útil.
 export const TERMINAL_LAYOUT = {
   centers: [-0.3208, 0, 0.3333],
   halfWidth: 0.165,
-  top: 0.575,
+  top: 0.075, // topo das regiões: 0,075 U abaixo do centro
   height: 0.12,
 };
 
 // `client` = área útil do jogo dentro do frame capturado (sem barra de título).
-export function terminalRegions(client: Region): Region[] {
-  const H = client.height;
+export function terminalRegions(client: Region, unit: number = uiUnit(client)): Region[] {
+  const U = unit;
   const cx = client.x + client.width / 2;
+  const cy = client.y + client.height / 2;
   return TERMINAL_LAYOUT.centers.map((c) => {
-    const x = Math.round(cx + c * H - TERMINAL_LAYOUT.halfWidth * H);
+    const x = Math.round(cx + c * U - TERMINAL_LAYOUT.halfWidth * U);
     return {
       x: Math.max(client.x, x),
-      y: Math.round(client.y + TERMINAL_LAYOUT.top * H),
-      width: Math.round(TERMINAL_LAYOUT.halfWidth * 2 * H),
-      height: Math.round(TERMINAL_LAYOUT.height * H),
+      y: Math.round(cy + TERMINAL_LAYOUT.top * U),
+      width: Math.round(TERMINAL_LAYOUT.halfWidth * 2 * U),
+      height: Math.round(TERMINAL_LAYOUT.height * U),
     };
   });
 }

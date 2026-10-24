@@ -8,7 +8,8 @@ import { join } from 'node:path';
 import { ChoiceSession } from '../../src/shared/session';
 import { captureGame, initCapture, ocrImage, type Frame } from '../../src/main/capture';
 import { findGameWindow } from '../../src/main/game-window';
-import { readCards, readSeal, readTerminal, scanChoice } from '../../src/main/analyzer';
+import { calibrateSeal, readCards, readSeal, readSealText, readTerminal, scanChoice, sealQuick } from '../../src/main/analyzer';
+import { flameNear } from '../../src/shared/flameslots';
 import { parseFlame } from '../../src/shared/flames';
 import { recognize, stopOcr } from '../../src/main/ocr';
 
@@ -95,6 +96,61 @@ async function realFixtures(): Promise<boolean> {
     console.log('[ss14] ' + f + ': ' + r.ms + ' ms, ícone ' + r.quality + ', ' + JSON.stringify(r.text) + ', Flame selecionada em ' + JSON.stringify(r.pos && [Math.round(r.pos.x), Math.round(r.pos.y)]) + ' → ' + (pass ? 'OK' : 'FALHOU'));
     ok &&= pass;
   }
+  // --- clique: o ícone mais perto do cursor é a Flame clicada ---
+  for (const [f, client, at] of [
+    ['seal-flames.png', { x: 0, y: 0, width: 1919, height: 1079 }, [1208, 331]],
+    ['seal-wealth.png', { x: 1, y: 31, width: 1920, height: 1080 }, [612, 281]],
+    ['seal-wonder-crop.png', { x: 515 - 960, y: 380 - 540, width: 1920, height: 1080 }, [215, 270]],
+  ] as const) {
+    const fr = load(f);
+    for (const [dx, dy] of [[0, 0], [18, 22], [-25, 30]]) {
+      const p = flameNear(fr.bgra, fr.width, client, { x: at[0] + dx, y: at[1] + dy });
+      const pass = !!p && Math.hypot(p.x - at[0], p.y - at[1]) < 25;
+      if (!pass) console.log(`[clique] ${f} clique (${at[0] + dx},${at[1] + dy}) → ${JSON.stringify(p)} FALHOU`);
+      ok &&= pass;
+    }
+  }
+  console.log('[clique] Flame pelo cursor: ' + (ok ? 'OK' : 'FALHOU'));
+
+  // --- janela mais alta (proporção ≈1,29, como a do amigo): interface do mesmo tamanho, centralizada ---
+  const pad = (fr: Frame, client: { x: number; y: number; width: number; height: number }, W: number, Hh: number, scale = 1): Frame => {
+    const inner = fr.image.crop(client);
+    const sized = scale === 1 ? inner : inner.resize({ width: Math.round(client.width * scale), quality: 'best' });
+    const sz = sized.getSize();
+    const out = Buffer.alloc(W * Hh * 4);
+    for (let i = 3; i < out.length; i += 4) out[i] = 255;
+    const src = sized.toBitmap();
+    const ox = Math.round((W - sz.width) / 2);
+    const oy = Math.round((Hh - sz.height) / 2);
+    for (let y = 0; y < sz.height; y++) src.copy(out, ((y + oy) * W + ox) * 4, y * sz.width * 4, (y + 1) * sz.width * 4);
+    const image = nativeImage.createFromBitmap(out, { width: W, height: Hh });
+    return { image, bgra: out, width: W, height: Hh, method: 'synthetic' };
+  };
+  {
+    const tall = pad(load('seal-flames.png'), { x: 0, y: 0, width: 1919, height: 1079 }, 1919, 1490);
+    const client = { x: 0, y: 0, width: 1919, height: 1490 };
+    const text = await readSealText(tall, client);
+    const q = sealQuick(tall, client, undefined, { x: 1210, y: 331 + 205 });
+    const pass = parseFlame(text)?.kind === 'guarantee' && !!q.pos && Math.abs(q.pos.y - (332 + 205)) < 25;
+    console.log(`[janela alta] Flames: ${JSON.stringify(text.slice(0, 60))} pos ${JSON.stringify(q.pos)} → ${pass ? 'OK' : 'FALHOU'}`);
+    ok &&= pass;
+    const tallT = pad(load('terminal.png'), { x: 1, y: 31, width: 1920, height: 1080 }, 1920, 1490);
+    const scanT = await readTerminal(tallT, { x: 0, y: 0, width: 1920, height: 1490 });
+    const passT = scanT.reads.length === 3;
+    console.log(`[janela alta] cartas: ${scanT.reads.length} lidas → ${passT ? 'OK' : 'FALHOU'}`);
+    ok &&= passT;
+  }
+  // --- escala de interface menor (80%): calibra pelo botão Confirm ---
+  {
+    const small = pad(load('seal-flames.png'), { x: 0, y: 0, width: 1919, height: 1079 }, 1919, 1079, 0.8);
+    const client = { x: 0, y: 0, width: 1919, height: 1079 };
+    const unit = await calibrateSeal(small, client);
+    const text = unit ? await readSealText(small, client, unit) : '';
+    const pass = !!unit && Math.abs(unit - 0.8 * 1079) < 40 && parseFlame(text)?.kind === 'guarantee';
+    console.log(`[escala 80%] U medido ${unit && Math.round(unit)} (esperado ~${Math.round(0.8 * 1079)}), texto ${JSON.stringify(text.slice(0, 50))} → ${pass ? 'OK' : 'FALHOU'}`);
+    ok &&= pass;
+  }
+
   const hud = await scanChoice(load('map-hud.png'), null);
   console.log(`[ss14] map-hud.png: ${hud.reads.length} cartas (esperado 0)`);
   return ok && hud.reads.length === 0;

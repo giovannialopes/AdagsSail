@@ -2,31 +2,35 @@
 // (medido em prints reais 1920x1080: ~0,59..0,65 da altura, centralizado). Cada clique numa Flame
 // (S2_System_Fire_Click no log) dispara uma leitura; a sessão guarda todas as Flames já vistas.
 import type { Region } from './layout';
+import { uiUnit } from './uiscale';
 import type { PriceMap } from './types';
 import { DEFAULT_BASELINE, type Baseline } from './valuation';
 import { describeFlame, flameValue, parseFlame, type Flame } from './flames';
 import { GOALS, type Goal } from './goals';
 import type { CardQuality } from './whisper-pool';
 
-export const SEAL_LAYOUT = { halfWidth: 0.22, top: 0.585, height: 0.075, iconY: 0.5, iconHalf: 0.022 };
+// Em unidades de interface U (1080 px na janela 1920x1080), a partir do centro da área útil.
+export const SEAL_LAYOUT = { halfWidth: 0.22, top: 0.085, height: 0.075, iconY: 0, iconHalf: 0.022 };
 
-export function sealTextRegion(client: Region): Region {
-  const H = client.height;
+export function sealTextRegion(client: Region, unit: number = uiUnit(client)): Region {
+  const U = unit;
   const cx = client.x + client.width / 2;
+  const cy = client.y + client.height / 2;
   return {
-    x: Math.round(cx - SEAL_LAYOUT.halfWidth * H),
-    y: Math.round(client.y + SEAL_LAYOUT.top * H),
-    width: Math.round(SEAL_LAYOUT.halfWidth * 2 * H),
-    height: Math.round(SEAL_LAYOUT.height * H),
+    x: Math.round(cx - SEAL_LAYOUT.halfWidth * U),
+    y: Math.round(cy + SEAL_LAYOUT.top * U),
+    width: Math.round(SEAL_LAYOUT.halfWidth * 2 * U),
+    height: Math.round(SEAL_LAYOUT.height * U),
   };
 }
 
 // Ícone da Flame selecionada (centro do selo): a cor dá a raridade da Flame.
-export function sealIconRegion(client: Region): Region {
-  const H = client.height;
+export function sealIconRegion(client: Region, unit: number = uiUnit(client)): Region {
+  const U = unit;
   const cx = client.x + client.width / 2;
-  const half = SEAL_LAYOUT.iconHalf * H;
-  return { x: Math.round(cx - half), y: Math.round(client.y + SEAL_LAYOUT.iconY * H - half), width: Math.round(half * 2), height: Math.round(half * 2) };
+  const cy = client.y + client.height / 2;
+  const half = SEAL_LAYOUT.iconHalf * U;
+  return { x: Math.round(cx - half), y: Math.round(cy + SEAL_LAYOUT.iconY * U - half), width: Math.round(half * 2), height: Math.round(half * 2) };
 }
 
 export interface SeenFlame {

@@ -28,6 +28,7 @@ const IsIconic = user32.func('bool __stdcall IsIconic(intptr_t hwnd)');
 const GetWindowRect = user32.func('bool __stdcall GetWindowRect(intptr_t hwnd, _Out_ AdagsRECT *rect)');
 const GetClientRect = user32.func('bool __stdcall GetClientRect(intptr_t hwnd, _Out_ AdagsRECT *rect)');
 const ClientToScreen = user32.func('bool __stdcall ClientToScreen(intptr_t hwnd, _Inout_ AdagsPOINT *pt)');
+const GetCursorPos = user32.func('bool __stdcall GetCursorPos(_Out_ AdagsPOINT *pt)');
 const DwmGetWindowAttribute = dwmapi.func(
   'int32 __stdcall DwmGetWindowAttribute(intptr_t hwnd, uint32 attr, _Out_ AdagsRECT *value, uint32 size)',
 );
@@ -51,6 +52,14 @@ export function findGameHwnd(): number {
     return true;
   }, 0);
   return found;
+}
+
+// Posição do cursor na tela (pixels físicos). Só leitura — usada para saber em qual Flame o jogador
+// acabou de clicar.
+export function cursorPos(): { x: number; y: number } {
+  const p = { x: 0, y: 0 };
+  GetCursorPos(p);
+  return p;
 }
 
 export function findGameWindow(): GameWindow | null {

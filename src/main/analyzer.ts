@@ -4,7 +4,8 @@
 //    depois cada carta é recortada e ampliada 2x ("%" vira "9" no texto pequeno sem ampliar).
 import { cardRegions, classifyQuality, groupCards, type CardRead, type OcrLine, type Region } from '../shared/layout';
 import { parseFlame } from '../shared/flames';
-import { findSelectedFlame } from '../shared/flameslots';
+import { findSelectedFlame, flameNear } from '../shared/flameslots';
+import { ANCHORS, uiUnit, unitFromAnchor } from '../shared/uiscale';
 import { regionSignature } from '../shared/signature';
 import { sealIconRegion, sealTextRegion } from '../shared/seal';
 import { readSlot, terminalRegions } from '../shared/terminal';
@@ -21,20 +22,49 @@ export interface CardScan {
   ms: number;
 }
 
-async function ocrRegion(frame: Frame, r: Region, mode: OcrMode, stretch = false): Promise<OcrLine[]> {
-  const image = frame.image.crop(r).resize({ width: r.width * UPSCALE, quality: 'best' });
+// `unit`: unidade de interface. Interface menor que 1080 (janela pequena) → amplia mais, para o texto
+// chegar ao OCR com o mesmo tamanho de uma janela 1920x1080.
+async function ocrRegion(frame: Frame, r: Region, mode: OcrMode, stretch = false, unit = 1080): Promise<OcrLine[]> {
+  const k = Math.min(4, Math.max(UPSCALE, (UPSCALE * 1080) / unit));
+  const image = frame.image.crop(r).resize({ width: Math.round(r.width * k), quality: 'best' });
   const { width, height } = image.getSize();
   const lines = await recognize(ocrImage({ image, bgra: image.toBitmap(), width, height, method: frame.method }, stretch), mode);
   return lines.map((l) => ({
     ...l,
     bbox: {
-      x0: r.x + l.bbox.x0 / UPSCALE,
-      y0: r.y + l.bbox.y0 / UPSCALE,
-      x1: r.x + l.bbox.x1 / UPSCALE,
-      y1: r.y + l.bbox.y1 / UPSCALE,
+      x0: r.x + l.bbox.x0 / k,
+      y0: r.y + l.bbox.y0 / k,
+      x1: r.x + l.bbox.x1 / k,
+      y1: r.y + l.bbox.y1 / k,
     },
   }));
 }
+
+// Calibração: acha uma âncora de texto abaixo do centro (OCR esparso) e mede a unidade de interface.
+// Várias âncoras possíveis: usa a primeira que o OCR encontrar.
+async function calibrateUnit(frame: Frame, client: Region, anchors: [RegExp, number][]): Promise<number | null> {
+  const band: Region = {
+    x: Math.round(client.x + client.width * 0.2),
+    y: Math.round(client.y + client.height / 2),
+    width: Math.round(client.width * 0.6),
+    height: Math.round(client.height / 2),
+  };
+  // amplia mais que o normal: a escala ainda é desconhecida (pode ser pequena)
+  const lines = await ocrRegion(frame, band, 'sparse', false, Math.min(client.height, 1080) * 0.75);
+  for (const [re, offset] of anchors) {
+    const hit = lines.find((l) => re.test(l.text));
+    const u = hit ? unitFromAnchor((hit.bbox.y0 + hit.bbox.y1) / 2, client, offset) : null;
+    if (u) return u;
+  }
+  return null;
+}
+
+export const calibrateSeal = (frame: Frame, client: Region) =>
+  calibrateUnit(frame, client, [
+    [/^\W*c[o0]nf[il1]rm\W*$/i, ANCHORS.sealConfirm],
+    [/^\W*selectable\s*seal\s*whispers\W*$/i, ANCHORS.sealSelectable],
+  ]);
+export const calibrateTerminal = (frame: Frame, client: Region) => calibrateUnit(frame, client, [[/select\s*a\s*seal\s*whisper/i, ANCHORS.terminalSelect]]);
 
 // Área útil do jogo dentro do frame (o frame pode vir em escala diferente da janela).
 export function clientRegion(frame: Frame, game: GameWindow | null): Region {
@@ -49,16 +79,16 @@ export function clientRegion(frame: Frame, game: GameWindow | null): Region {
   };
 }
 
-export async function readTerminal(frame: Frame, client: Region): Promise<CardScan> {
+export async function readTerminal(frame: Frame, client: Region, unit: number = uiUnit(client)): Promise<CardScan> {
   const t0 = Date.now();
   const lines: OcrLine[] = [];
   const reads: CardRead[] = [];
-  const regions = terminalRegions(client);
+  const regions = terminalRegions(client, unit);
   for (let slot = 0; slot < regions.length; slot++) {
     // Versão simples primeiro; se a leitura não sair limpa, tenta com contraste esticado.
     let best: { card: ReturnType<typeof readSlot>; lines: OcrLine[]; score: number } | null = null;
     for (const stretch of [false, true]) {
-      const slotLines = await ocrRegion(frame, regions[slot], 'block', stretch);
+      const slotLines = await ocrRegion(frame, regions[slot], 'block', stretch, unit);
       const card = readSlot(slotLines, slot);
       const parsed = card ? parseAffixes(card.lines.join('\n')) : null;
       const score = parsed ? 1 + parsed.affixes.length * 2 - parsed.unknown.length : 0;
@@ -103,20 +133,22 @@ export interface FlameScan {
 
 // Tela "Void Sea Seal": texto da Flame selecionada (centro) + cor do ícone (raridade da Flame).
 // Parte barata (sem OCR, ~15 ms): assinatura do texto, Flame selecionada e cor do ícone.
-export function sealQuick(frame: Frame, client: Region) {
-  const icon = sealIconRegion(client);
+// `click`: onde o jogador clicou (pixels do frame). Com clique, a Flame é o ícone mais perto dele;
+// sem clique (tela acabou de abrir), cai na detecção pelo contorno.
+export function sealQuick(frame: Frame, client: Region, unit: number = uiUnit(client), click?: { x: number; y: number }) {
+  const icon = sealIconRegion(client, unit);
   return {
-    sig: regionSignature(frame.bgra, frame.width, sealTextRegion(client)),
-    pos: findSelectedFlame(frame.bgra, frame.width, client),
+    sig: regionSignature(frame.bgra, frame.width, sealTextRegion(client, unit)),
+    pos: click ? flameNear(frame.bgra, frame.width, client, click, unit) : findSelectedFlame(frame.bgra, frame.width, client, unit),
     quality: classifyQuality(frame.bgra, frame.width, { x0: icon.x, y0: icon.y, x1: icon.x + icon.width, y1: icon.y + icon.height }, true, 0.6),
   };
 }
 
 // Parte cara (~250 ms): OCR do texto da Flame selecionada.
-export async function readSealText(frame: Frame, client: Region): Promise<string> {
-  const region = sealTextRegion(client);
-  let lines = await ocrRegion(frame, region, 'block');
-  if (!parseFlame(lines.map((l) => l.text).join(' '))) lines = await ocrRegion(frame, region, 'block', true);
+export async function readSealText(frame: Frame, client: Region, unit: number = uiUnit(client)): Promise<string> {
+  const region = sealTextRegion(client, unit);
+  let lines = await ocrRegion(frame, region, 'block', false, unit);
+  if (!parseFlame(lines.map((l) => l.text).join(' '))) lines = await ocrRegion(frame, region, 'block', true, unit);
   return lines.map((l) => l.text).join(' ');
 }
 
@@ -132,8 +164,8 @@ export async function readSeal(frame: Frame, client: Region): Promise<FlameScan>
 }
 
 // Tela de escolha: tenta o layout fixo; se não achar nada, cai para o genérico.
-export async function scanChoice(frame: Frame, game: GameWindow | null): Promise<CardScan & { layout: 'terminal' | 'generic' }> {
-  const fixed = await readTerminal(frame, clientRegion(frame, game));
+export async function scanChoice(frame: Frame, game: GameWindow | null, unit?: number): Promise<CardScan & { layout: 'terminal' | 'generic' }> {
+  const fixed = await readTerminal(frame, clientRegion(frame, game), unit);
   if (fixed.reads.length) return { ...fixed, layout: 'terminal' };
   const generic = await readCards(frame);
   return { ...generic, ms: generic.ms + fixed.ms, layout: 'generic' };

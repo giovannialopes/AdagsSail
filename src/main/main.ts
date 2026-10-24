@@ -15,11 +15,12 @@ import { parseFlame } from '../shared/flames';
 import { SealSession } from '../shared/seal';
 import { ChoiceSession } from '../shared/session';
 import { saveCalibration } from './calibration';
-import { clientRegion, readSealText, scanChoice, sealQuick } from './analyzer';
+import { calibrateSeal, calibrateTerminal, clientRegion, readSealText, scanChoice, sealQuick } from './analyzer';
+import { uiUnit } from '../shared/uiscale';
 import { SAME_TEXT, signatureDiff } from '../shared/signature';
 import { History } from './history';
 import { captureGame, initCapture, type Frame } from './capture';
-import { findGameWindow, type GameWindow } from './game-window';
+import { cursorPos, findGameWindow, type GameWindow } from './game-window';
 import { findLogPath } from './log-path';
 import { LogTail } from './log-tail';
 import { stopOcr } from './ocr';
@@ -304,8 +305,18 @@ async function analyzeOnce(): Promise<void> {
     overlayMessage = 'Não consegui capturar a janela do jogo';
     return;
   }
-  const scan = await scanChoice(frame, g);
+  const client = clientRegion(frame, g);
+  let scan = await scanChoice(frame, g, unitFor('terminal', client));
   if (token !== screenToken || !session) return; // a tela fechou enquanto lia
+  // layout fixo não achou as cartas: pode ser escala da interface diferente — mede e relê
+  if (scan.layout !== 'terminal' && !settings.uiUnits?.[`${client.width}x${client.height}`]?.terminal) {
+    const unit = await calibrateTerminal(frame, client);
+    if (unit) {
+      saveUnit('terminal', client, unit);
+      scan = await scanChoice(frame, g, unit);
+    }
+    if (token !== screenToken || !session) return;
+  }
   lastFrame = frame;
   lastLines = scan.lines;
   lastReads = scan.reads;
@@ -377,8 +388,22 @@ function analyzeManually(): void {
 let sealBusy = false;
 let sealAgain = false;
 let sealFrameSaved = false;
+// último clique numa Flame (cursor em pixels de tela): a Flame clicada é o ícone mais perto dele
+let lastFlameClick: { x: number; y: number; at: number } | null = null;
 // texto já lido de cada Flame (pela assinatura da imagem): clicar de novo não precisa de OCR
 let flameTextCache: { sig: number[]; text: string }[] = [];
+
+// Unidade de interface para este tamanho de janela: medida (calibrada) ou estimada pela proporção.
+function unitFor(kind: 'seal' | 'terminal', client: { width: number; height: number; x: number; y: number }): number {
+  return settings.uiUnits?.[`${client.width}x${client.height}`]?.[kind] ?? uiUnit(client);
+}
+
+function saveUnit(kind: 'seal' | 'terminal', client: { width: number; height: number }, unit: number): void {
+  const key = `${client.width}x${client.height}`;
+  settings.uiUnits = { ...settings.uiUnits, [key]: { ...settings.uiUnits?.[key], [kind]: Math.round(unit) } };
+  saveSettings(settingsFile(), settings);
+  logError(`[info] escala da interface (${kind}) para ${key}: U=${Math.round(unit)}`);
+}
 
 async function analyzeSealOnce(): Promise<void> {
   const token = screenToken;
@@ -394,7 +419,12 @@ async function analyzeSealOnce(): Promise<void> {
     frame = await captureGame(g);
     if (!frame || !seal) return;
     client = clientRegion(frame, g);
-    quick = sealQuick(frame, client);
+    // clique recente → posição do cursor convertida para pixels do frame
+    const click =
+      lastFlameClick && Date.now() - lastFlameClick.at < 3000
+        ? { x: ((lastFlameClick.x - g.rect.x) * frame.width) / g.rect.width, y: ((lastFlameClick.y - g.rect.y) * frame.height) / g.rect.height }
+        : undefined;
+    quick = sealQuick(frame, client, unitFor('seal', client), click);
     const samePos = !!prev && (!prev.pos || !quick.pos ? prev.pos === quick.pos : Math.hypot(prev.pos.x - quick.pos.x, prev.pos.y - quick.pos.y) < 20);
     if (prev && samePos && signatureDiff(prev.sig, quick.sig) < SAME_TEXT) break;
     prev = quick;
@@ -403,8 +433,18 @@ async function analyzeSealOnce(): Promise<void> {
   if (!frame || !quick || !client || !seal || token !== screenToken) return;
   lastFrame = frame;
   const cached = flameTextCache.find((c) => signatureDiff(c.sig, quick!.sig) < SAME_TEXT);
-  const text = cached?.text ?? (await readSealText(frame, client));
+  let text = cached?.text ?? (await readSealText(frame, client, unitFor('seal', client)));
   if (token !== screenToken || !seal) return; // fechou enquanto lia
+  // Não leu Flame nenhuma? Pode ser escala da interface diferente: mede pelo botão "Confirm" e relê.
+  if (!parseFlame(text) && !settings.uiUnits?.[`${client.width}x${client.height}`]?.seal) {
+    const unit = await calibrateSeal(frame, client);
+    if (unit) {
+      saveUnit('seal', client, unit);
+      text = await readSealText(frame, client, unit);
+      quick = sealQuick(frame, client, unit);
+    }
+    if (token !== screenToken || !seal) return;
+  }
   if (!cached && parseFlame(text)) flameTextCache.push({ sig: quick.sig, text });
   const seen = seal.add(text, quick.quality, prices.get(), settings.baseline, quick.pos ?? undefined);
   overlayStatus = 'ready';
@@ -536,6 +576,7 @@ function onLogLine(line: string): void {
       setTimeout(() => void analyzeSeal(), settings.captureDelayMs);
       break;
     case 'flameClick':
+      lastFlameClick = { ...cursorPos(), at: Date.now() };
       setTimeout(() => void analyzeSeal(), 60);
       break;
     case 'sealConfirm':
