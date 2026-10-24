@@ -1,0 +1,26 @@
+[2026.10.23-16.28.50:630][793]AliCloundLogSDK: UUserEventLibrary::UserEvent(s2gameplay, s2gameplay_get_altar)
+[2026.10.23-16.28.54:445][258]TLLua: Display: [Game] AudioMgr@PlayAudio  AudioEnum  == S2_System_Gen_Confirm
+[2026.10.23-16.28.54:494][265]LogDataTable: Warning: UDataTable::FindRow : 'Play_UI_S2_System_Gen_Confirm' requested row 'Play_UI_S2_System_Gen_Confirm' not in DataTable '/Game/Audio/BluePrint/CD/AudioCDTable.AudioCDTable'.
+[2026.10.23-16.28.55:387][385]TLGame: Display: [Game] UMapGamePlayAction_SeasonAltar ReceiveServerData SelectedRoutes-Num:[2],PendingRoutes-Num:[0],LeftRouteTimes:4, NeedPendingOblationInfos:1!
+[2026.10.23-16.28.58:653][854]LogStreaming: Display: ULevelStreaming::RequestLevel(/Game/Art/Maps/S2/XuKongHaiTu/XuKongHaiTu_Landscape) is flushing async loading
+[2026.10.23-16.28.59:033][854]TLLua: Display: [Game] SceneLevelMgr@ LoadSubLevelFromCfg END! InSubLevelPath = /Game/Art/Maps/S2/XuKongHaiTu/XuKongHaiTu_Landscape
+[2026.10.23-16.28.59:101][854]TLLua: Display: [Game] AudioMgr@PlayAudio  AudioEnum  == S2_System_Open
+[2026.10.23-16.28.59:378][854]TLLua: Display: [Game] SceneLevelMgr@ LoadSubLevelFromCfg STT! SubLevelPath = /Game/Art/Maps/S2/XuKongHaiTu/XuKongHaiTu_Landscape, LatentActionId = 7
+[2026.10.23-16.28.59:386][854]LogDataTable: Warning: UDataTable::FindRow : 'Play_UI_S2_System_Open' requested row 'Play_UI_S2_System_Open' not in DataTable '/Game/Audio/BluePrint/CD/AudioCDTable.AudioCDTable'.
+[2026.10.23-16.29.03:747][480]LogDataTable: Warning: UDataTable::FindRow : 'AudioMgr' requested row 'VoidAltarCoord_BtnSelect' not in DataTable '/Game/Audio/BluePrint/AudioAndUIDataTable.AudioAndUIDataTable'.
+[2026.10.23-16.29.03:747][480]TLLua: Display: [Game] AudioMgr@PlayAudio  AudioEnum  == S2_System_Card_Click
+[2026.10.23-16.29.03:783][485]LogDataTable: Warning: UDataTable::FindRow : 'Play_UI_S2_System_Card_Click' requested row 'Play_UI_S2_System_Card_Click' not in DataTable '/Game/Audio/BluePrint/CD/AudioCDTable.AudioCDTable'.
+[2026.10.23-16.29.04:970][656]LogDataTable: Warning: UDataTable::FindRow : 'AudioMgr' requested row 'VoidAltarCoord_BtnSelect' not in DataTable '/Game/Audio/BluePrint/AudioAndUIDataTable.AudioAndUIDataTable'.
+[2026.10.23-16.29.04:970][656]TLLua: Display: [Game] AudioMgr@PlayAudio  AudioEnum  == S2_System_Card_Click
+[2026.10.23-16.29.04:971][656]LogDataTable: Warning: UDataTable::FindRow : 'Play_UI_S2_System_Card_Click' requested row 'Play_UI_S2_System_Card_Click' not in DataTable '/Game/Audio/BluePrint/CD/AudioCDTable.AudioCDTable'.
+[2026.10.23-16.29.05:297][703]LogDataTable: Warning: UDataTable::FindRow : 'AudioMgr' requested row 'VoidAltarCoord_Rarity2SelectedBtn' not in DataTable '/Game/Audio/BluePrint/AudioAndUIDataTable.AudioAndUIDataTable'.
+[2026.10.23-16.29.05:297][703]TLLua: Display: [Game] AudioMgr@PlayAudio  AudioEnum  == S2_System_Card_Confirm
+[2026.10.23-16.29.05:333][708]LogDataTable: Warning: UDataTable::FindRow : 'Play_UI_S2_System_Card_Confirm' requested row 'Play_UI_S2_System_Card_Confirm' not in DataTable '/Game/Audio/BluePrint/CD/AudioCDTable.AudioCDTable'.
+[2026.10.23-16.29.05:930][794]TLLua: Display: [Game] AudioMgr@PlayAudio  AudioEnum  == S2_System_Star_Flash
+[2026.10.23-16.29.05:944][796]LogDataTable: Warning: UDataTable::FindRow : 'Play_UI_S2_System_Star_Flash' requested row 'Play_UI_S2_System_Star_Flash' not in DataTable '/Game/Audio/BluePrint/CD/AudioCDTable.AudioCDTable'.
+[2026.10.23-16.29.06:160][827]TLLua: Display: [Game] SceneLevelMgr@ UnLoadSubLevelFromCfg END! SubLevelName = /Game/Art/Maps/S2/XuKongHaiTu/XuKongHaiTu_Landscape
+[2026.10.23-16.29.08:604][172]TLLua: Display: [Game] AudioMgr@PlayAudio  AudioEnum  == S2_System_Gen_Confirm
+[2026.10.23-16.29.08:611][173]LogDataTable: Warning: UDataTable::FindRow : 'Play_UI_S2_System_Gen_Confirm' requested row 'Play_UI_S2_System_Gen_Confirm' not in DataTable '/Game/Audio/BluePrint/CD/AudioCDTable.AudioCDTable'.
+[2026.10.23-16.29.09:563][302]TLGame: Display: [Game] UMapGamePlayAction_SeasonAltar ReceiveServerData SelectedRoutes-Num:[3],PendingRoutes-Num:[0],LeftRouteTimes:3, NeedPendingOblationInfos:1!
+[2026.10.23-16.29.09:604][302]AliCloundLogSDK: UUserEventLibrary::UserEvent(s2gameplay, s2gameplay_select_altar)
+[2026.10.23-16.29.17:064][330]AliCloundLogSDK: UUserEventLibrary::UserEvent(s2gameplay, s2gameplay_finish)

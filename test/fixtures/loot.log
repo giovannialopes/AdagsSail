@@ -1,0 +1,34 @@
+[2026.10.23-16.29.18:123][483]TLLua: Display: [Game] BagMgr@:Modfy BagItem PageId = 102 SlotId = 16 ConfigBaseId = 5140 Num = 3
+[2026.10.23-16.30.57:298][929]LogDataTable: Warning: UDataTable::FindRow : 'Play_Obj_BlackSail_Chest_Open' requested row 'Play_Obj_BlackSail_Chest_Open' not in DataTable '/Game/Audio/BluePrint/CD/AudioCDTable.AudioCDTable'.
+[2026.10.23-16.31.00:169][292]TLLua: Display: [Game] ItemChange@ ProtoName=PickItems start
+[2026.10.23-16.31.00:169][292]TLLua: Display: [Game] ItemChange@ Update Id=6004_a74fe1e7-ce70-11f1-aa6c-00000000002a BagNum=9 in PageId=103 SlotId=66
+[2026.10.23-16.31.00:169][292]TLLua: Display: [Game] BagMgr@:Modfy BagItem PageId = 103 SlotId = 66 ConfigBaseId = 6004 Num = 9
+[2026.10.23-16.31.00:169][292]TLLua: Display: [Game] ItemChange@ Update Id=5140_a394a3ff-cee4-11f1-9765-000000000029 BagNum=230 in PageId=102 SlotId=16
+[2026.10.23-16.31.00:169][292]TLLua: Display: [Game] BagMgr@:Modfy BagItem PageId = 102 SlotId = 16 ConfigBaseId = 5140 Num = 230
+[2026.10.23-16.31.00:169][292]TLLua: Display: [Game] ItemChange@ Update Id=100200_afc5b334-ce75-11f1-aa6c-00000000002a BagNum=902 in PageId=102 SlotId=2
+[2026.10.23-16.31.00:169][292]TLLua: Display: [Game] BagMgr@:Modfy BagItem PageId = 102 SlotId = 2 ConfigBaseId = 100200 Num = 902
+[2026.10.23-16.31.00:170][292]TLLua: Display: [Game] ItemChange@ ProtoName=PickItems end
+[2026.10.23-16.31.01:627][487]TLLua: Display: [Game] ItemChange@ ProtoName=PickItems start
+[2026.10.23-16.31.01:627][487]TLLua: Display: [Game] ItemChange@ Add Id=5144_23971a55-ceff-11f1-b068-00000000003d BagNum=6 in PageId=102 SlotId=25
+[2026.10.23-16.31.01:627][487]TLLua: Display: [Game] BagMgr@:Modfy BagItem PageId = 102 SlotId = 25 ConfigBaseId = 5144 Num = 6
+[2026.10.23-16.31.01:627][487]TLLua: Display: [Game] ItemChange@ ProtoName=PickItems end
+[2026.10.23-16.31.02:016][543]TLLua: Display: [Game] ItemChange@ ProtoName=PickItems start
+[2026.10.23-16.31.02:016][543]TLLua: Display: [Game] ItemChange@ Update Id=5144_23971a55-ceff-11f1-b068-00000000003d BagNum=7 in PageId=102 SlotId=25
+[2026.10.23-16.31.02:016][543]TLLua: Display: [Game] BagMgr@:Modfy BagItem PageId = 102 SlotId = 25 ConfigBaseId = 5144 Num = 7
+[2026.10.23-16.31.02:016][543]TLLua: Display: [Game] ItemChange@ ProtoName=PickItems end
+[2026.10.23-16.31.02:454][606]TLLua: Display: [Game] ItemChange@ ProtoName=PickItems start
+[2026.10.23-16.31.02:454][606]TLLua: Display: [Game] ItemChange@ Update Id=5144_23971a55-ceff-11f1-b068-00000000003d BagNum=8 in PageId=102 SlotId=25
+[2026.10.23-16.31.02:454][606]TLLua: Display: [Game] BagMgr@:Modfy BagItem PageId = 102 SlotId = 25 ConfigBaseId = 5144 Num = 8
+[2026.10.23-16.31.02:454][606]TLLua: Display: [Game] ItemChange@ ProtoName=PickItems end
+[2026.10.23-16.31.02:884][667]TLLua: Display: [Game] ItemChange@ ProtoName=PickItems start
+[2026.10.23-16.31.02:884][667]TLLua: Display: [Game] ItemChange@ Update Id=10161_e621beb2-ce71-11f1-aa6c-00000000002a BagNum=2 in PageId=103 SlotId=34
+[2026.10.23-16.31.02:884][667]TLLua: Display: [Game] BagMgr@:Modfy BagItem PageId = 103 SlotId = 34 ConfigBaseId = 10161 Num = 2
+[2026.10.23-16.31.02:884][667]TLLua: Display: [Game] ItemChange@ ProtoName=PickItems end
+[2026.10.23-16.31.03:254][719]TLLua: Display: [Game] ItemChange@ ProtoName=PickItem start
+[2026.10.23-16.31.03:254][719]TLLua: Display: [Game] ItemChange@ Add Id=71003_248f0e9b-ceff-11f1-b068-00000000003d BagNum=1 in PageId=100 SlotId=3
+[2026.10.23-16.31.03:254][719]TLLua: Display: [Game] BagMgr@:Modfy BagItem PageId = 100 SlotId = 3 ConfigBaseId = 71003 Num = 1
+[2026.10.23-16.31.03:254][719]TLLua: Display: [Game] ItemChange@ ProtoName=PickItem end
+[2026.10.23-16.31.04:247][862]TLLua: Display: [Game] ItemChange@ ProtoName=PickItems start
+[2026.10.23-16.31.04:247][862]TLLua: Display: [Game] ItemChange@ Update Id=200029_60409ad6-cc6e-11f1-9b59-0000000000ca BagNum=235 in PageId=102 SlotId=9
+[2026.10.23-16.31.04:247][862]TLLua: Display: [Game] BagMgr@:Modfy BagItem PageId = 102 SlotId = 9 ConfigBaseId = 200029 Num = 235
+[2026.10.23-16.31.04:247][862]TLLua: Display: [Game] ItemChange@ ProtoName=PickItems end

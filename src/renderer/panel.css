@@ -1,0 +1,364 @@
+:root {
+  --bg: rgba(14, 16, 24, 0.94);
+  --panel: rgba(255, 255, 255, 0.04);
+  --line: rgba(255, 255, 255, 0.09);
+  --text: #e9e6dc;
+  --muted: #8f8c83;
+  --gold: #f2c04b;
+  --ok: #5fd38d;
+  --bad: #ff7a66;
+  --scrap: #cfc6ad;
+  --thread: #ffae3a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: transparent;
+  color: var(--text);
+  font: 12.5px/1.4 'Segoe UI', system-ui, sans-serif;
+  user-select: none;
+  overflow: hidden;
+}
+
+.card {
+  margin: 6px;
+  padding: 10px 12px 12px;
+  border-radius: 12px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+header {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  -webkit-app-region: drag;
+  cursor: move;
+}
+
+.no-drag,
+button {
+  -webkit-app-region: no-drag;
+}
+
+.brand {
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  color: var(--gold);
+}
+
+.sub {
+  color: var(--muted);
+  font-size: 11px;
+  flex: 1;
+}
+
+button {
+  font: inherit;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+button:hover {
+  border-color: var(--gold);
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+button.icon {
+  padding: 0 6px;
+  border: none;
+  background: none;
+  color: var(--muted);
+}
+
+button.off {
+  color: var(--muted);
+}
+
+.status {
+  display: flex;
+  gap: 6px;
+  margin: 8px 0;
+}
+
+.pill {
+  font-size: 11px;
+  padding: 1px 8px;
+  border-radius: 99px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+}
+
+.pill.ok {
+  color: var(--ok);
+  border-color: rgba(95, 211, 141, 0.4);
+}
+
+.pill.warn {
+  color: #f2c04b;
+  border-color: rgba(242, 192, 75, 0.4);
+}
+
+.pill.bad {
+  color: var(--bad);
+  border-color: rgba(255, 122, 102, 0.4);
+}
+
+.notice {
+  margin: 0 0 8px;
+  padding: 6px 8px;
+  border-radius: 7px;
+  background: rgba(255, 122, 102, 0.1);
+  color: var(--bad);
+  font-size: 11.5px;
+}
+
+.totals {
+  display: grid;
+  grid-template-columns: 1.15fr 1.1fr 0.75fr;
+  gap: 6px;
+}
+
+.totals > div {
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.label {
+  display: block;
+  color: var(--muted);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.totals strong {
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
+}
+
+.mini {
+  display: block;
+  min-height: 14px;
+  color: var(--muted);
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.mini.on {
+  color: var(--ok);
+}
+
+#total {
+  color: var(--gold);
+}
+
+.last {
+  margin: 6px 0 8px;
+  color: var(--muted);
+}
+
+.last b {
+  color: var(--text);
+}
+
+.vs-box {
+  margin-top: 10px;
+}
+
+.vs-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.vs-label b {
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.vs {
+  display: flex;
+  height: 6px;
+  margin: 3px 0 8px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: var(--panel);
+}
+
+#vs-scrap {
+  background: var(--scrap);
+}
+
+#vs-thread {
+  background: var(--thread);
+}
+
+.vs i {
+  transition: width 0.4s ease;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+td {
+  padding: 2px 0;
+}
+
+td:nth-child(2),
+td:nth-child(3) {
+  text-align: right;
+}
+
+td:nth-child(3) {
+  color: var(--muted);
+  width: 70px;
+}
+
+tr.zero {
+  color: var(--muted);
+  opacity: 0.6;
+}
+
+.box {
+  margin-top: 6px;
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.box > summary {
+  padding: 6px 8px;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 11.5px;
+  list-style: none;
+}
+
+.box > summary::-webkit-details-marker {
+  display: none;
+}
+
+.box > summary::before {
+  content: '▸';
+  display: inline-block;
+  width: 12px;
+  transition: transform 0.15s ease;
+}
+
+.box[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+.box > summary b {
+  color: var(--gold);
+}
+
+.box > table,
+.box > .goals,
+.box > .empty {
+  padding: 0 8px 8px;
+}
+
+.empty {
+  margin: 0;
+  color: var(--muted);
+  font-size: 11.5px;
+}
+
+.goals {
+  display: grid;
+  gap: 4px;
+}
+
+.goal {
+  display: grid;
+  grid-template-columns: 14px 1fr;
+  gap: 0 6px;
+  align-items: start;
+  width: 100%;
+  text-align: left;
+  padding: 6px 8px;
+  background: transparent;
+}
+
+.goal .dotsel {
+  width: 10px;
+  height: 10px;
+  margin-top: 3px;
+  border-radius: 50%;
+  border: 1.5px solid var(--muted);
+}
+
+.goal.on {
+  border-color: var(--gold);
+  background: rgba(242, 192, 75, 0.1);
+}
+
+.goal.on .dotsel {
+  border-color: var(--gold);
+  background: var(--gold);
+}
+
+.goal .gname {
+  font-weight: 600;
+}
+
+.goal .gdesc {
+  grid-column: 2;
+  color: var(--muted);
+  font-size: 10.5px;
+}
+
+#prices td:nth-child(2) {
+  color: var(--text);
+}
+
+footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.totals .label {
+  white-space: nowrap;
+  font-size: 9.5px;
+  letter-spacing: 0.03em;
+}
+
+.box > .round-table {
+  padding: 0 8px 8px;
+}
+
+.round-table td:nth-child(2) {
+  color: var(--gold);
+  font-weight: 600;
+  width: auto;
+}
+
+/* padding não funciona em <table> com border-collapse: usa margem */
+.box > table {
+  width: calc(100% - 16px);
+  margin: 0 8px 8px;
+  padding: 0;
+}

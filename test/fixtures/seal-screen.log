@@ -1,0 +1,11 @@
+[2026.10.23-19.18.35:021][392]TLLua: Display: [Game] VoidBeacon Run
+[2026.10.23-19.18.38:436][885]TLLua: Display: [Game] AudioMgr@PlayAudio  AudioEnum  == S2_System_Fire_Click
+[2026.10.23-19.18.38:444][886]LogDataTable: Warning: UDataTable::FindRow : 'Play_UI_S2_System_Fire_Click' requested row 'Play_UI_S2_System_Fire_Click' not in DataTable '/Game/Audio/BluePrint/CD/AudioCDTable.AudioCDTable'.
+[2026.10.23-19.18.39:000][966]TLLua: Display: [Game] AudioMgr@PlayAudio  AudioEnum  == S2_System_Fire_Click
+[2026.10.23-19.18.39:000][966]LogDataTable: Warning: UDataTable::FindRow : 'Play_UI_S2_System_Fire_Click' requested row 'Play_UI_S2_System_Fire_Click' not in DataTable '/Game/Audio/BluePrint/CD/AudioCDTable.AudioCDTable'.
+[2026.10.23-19.18.39:493][ 37]TLLua: Display: [Game] AudioMgr@PlayAudio  AudioEnum  == S2_System_Fire_Click
+[2026.10.23-19.18.39:494][ 37]LogDataTable: Warning: UDataTable::FindRow : 'Play_UI_S2_System_Fire_Click' requested row 'Play_UI_S2_System_Fire_Click' not in DataTable '/Game/Audio/BluePrint/CD/AudioCDTable.AudioCDTable'.
+[2026.10.23-19.18.39:931][100]TLLua: Display: [Game] AudioMgr@PlayAudio  AudioEnum  == S2_System_Fire_Click
+[2026.10.23-19.18.39:932][100]LogDataTable: Warning: UDataTable::FindRow : 'Play_UI_S2_System_Fire_Click' requested row 'Play_UI_S2_System_Fire_Click' not in DataTable '/Game/Audio/BluePrint/CD/AudioCDTable.AudioCDTable'.
+[2026.10.23-19.18.42:934][532]LogDataTable: Warning: UDataTable::FindRow : 'AudioMgr' requested row 'VoidBeacon_C_BtnConfirm' not in DataTable '/Game/Audio/BluePrint/AudioAndUIDataTable.AudioAndUIDataTable'.
+[2026.10.23-19.18.43:536][618]TLLua: Display: [Game] VoidBeacon Destory

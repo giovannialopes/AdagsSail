@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self'" />
+    <title>AdagsSail</title>
+    <link rel="stylesheet" href="panel.css" />
+  </head>
+  <body>
+    <main class="card" id="card">
+      <header class="drag">
+        <span class="brand">AdagsSail</span>
+        <span class="sub">Blacksail · SS14</span>
+        <button id="close" class="icon no-drag" title="Fechar">✕</button>
+      </header>
+
+      <div class="status">
+        <span id="st-log" class="pill">Log</span>
+        <span id="st-game" class="pill">Jogo</span>
+        <span id="st-prices" class="pill">Preços</span>
+      </div>
+      <p id="notice" class="notice" hidden></p>
+
+      <section class="totals">
+        <div>
+          <span class="label">Sessão</span>
+          <strong id="total">0</strong><small> FE</small>
+          <span class="mini" id="perhour"></span>
+        </div>
+        <div>
+          <span class="label">Tempo em mapa</span>
+          <strong id="maptime">0:00</strong>
+          <span class="mini" id="mapstate"></span>
+        </div>
+        <div>
+          <span class="label">Baús</span>
+          <strong id="chests">0</strong>
+          <span class="mini" id="lastchest"></span>
+        </div>
+      </section>
+
+      <section class="vs-box">
+        <div class="vs-label">
+          <span>Scrap <b id="scrapqty">0</b> · <b id="scrapfe">0</b> FE</span>
+          <span>Thread <b id="threadqty">0</b> · <b id="threadfe">0</b> FE</span>
+        </div>
+        <div class="vs"><i id="vs-scrap"></i><i id="vs-thread"></i></div>
+      </section>
+
+      <details id="round-box" class="box">
+        <summary>Rodada atual: <b id="round-picks">0/6</b></summary>
+        <table class="round-table">
+          <tr><td>Garantido</td><td id="round-g">—</td></tr>
+          <tr><td>Média</td><td id="round-e">—</td></tr>
+          <tr><td>Máximo</td><td id="round-j">—</td></tr>
+        </table>
+      </details>
+
+      <details id="goal-box" class="box">
+        <summary>Prioridade de farm: <b id="goal-current">Máximo FE</b></summary>
+        <div id="goals" class="goals"></div>
+      </details>
+
+      <details id="drops-box" class="box">
+        <summary>Drops da sessão</summary>
+        <table id="rows"></table>
+      </details>
+
+      <details id="prices-box" class="box">
+        <summary>Preços TITrack (SS14)</summary>
+        <table id="prices"></table>
+      </details>
+
+      <footer>
+        <button id="analyze" title="Força a leitura da tela agora (Ctrl+Alt+W). Normalmente é automático.">Ler cartas</button>
+        <button id="reset" title="Zera o contador da sessão: FE, tempo em mapa e baús (Ctrl+Alt+R)">Zerar</button>
+        <button id="overlay" title="Esconde/mostra o quadro e as etiquetas sobre as cartas (Ctrl+Alt+O)">Esconder overlay</button>
+      </footer>
+    </main>
+    <script src="panel.js"></script>
+  </body>
+</html>
